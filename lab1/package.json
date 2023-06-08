@@ -1,0 +1,36 @@
+{
+	"name": "netomi-voc-service",
+	"version": "1.4.3-dev-qs",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "nodemon ./src/index.js",
+		"start": "node ./src/index.js",
+		"eslint:fix": "eslint --fix -c ./.eslintrc ./src/**/*.ts"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"eslint-config-prettier": "^8.6.0",
+		"eslint-config-react-app": "^7.0.1",
+		"eslint-plugin-prettier": "^4.2.1",
+		"husky": "^8.0.3",
+		"nodemon": "^2.0.20"
+	},
+	"dependencies": {
+		"argon2": "^0.30.3",
+		"axios": "^1.1.3",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.3",
+		"express": "^4.18.2",
+		"express-session": "^1.17.3",
+		"joi": "^17.9.2",
+		"jsonwebtoken": "^9.0.0",
+		"mongodb": "^5.5.0",
+		"mongoose": "^7.1.1",
+		"socket.io": "^4.6.2"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	}
+}

@@ -1,0 +1,428 @@
+---
+openapi: 3.0.0
+info:
+    title: Api documentation
+    description: Examples of api routes for back-end server for first lab work.
+    version: 1.0.0-oas3.1
+servers:
+    - url: /
+paths:
+    /api/auth:
+        post:
+            summary: Create user
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api_auth_body'
+            responses:
+                '201':
+                    description: User created successfully!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_201'
+                '400':
+                    description: When error ocured while creating user!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+    /api/auth/login:
+        post:
+            summary: Authorazing existing user
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/auth_login_body'
+            responses:
+                '200':
+                    description: Log in successfully!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_201'
+                '400':
+                    description: When error ocured while login in user!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+    /api/auth/about:
+        get:
+            responses:
+                '200':
+                    description: Information about website
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_200'
+    /api/users/me:
+        get:
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Bearer token required to access protected api routes.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+                      example: Bearer <access token>
+            responses:
+                '200':
+                    description: Returns user information based on access token!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_201'
+                '400':
+                    description: Error when getting info about user!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+    /api/posts:
+        post:
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Bearer token required to access protected api routes.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+                      example: Bearer <access token>
+            responses:
+                '201':
+                    description: Post created successfully!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_201_1'
+                '400':
+                    description: When error ocured!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+    /api/posts/feed:
+        get:
+            description: Newest posts from all of users
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Bearer token required to access protected api routes.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+                      example: Bearer <access token>
+                - name: page
+                  in: query
+                  description: Page number that you want to see.
+                  required: false
+                  style: form
+                  explode: true
+                  schema:
+                      minimum: 1
+                      type: number
+                      default: 1
+                - name: perPage
+                  in: query
+                  description: Count of posts per page that you want to see.
+                  required: false
+                  style: form
+                  explode: true
+                  schema:
+                      minimum: 10
+                      type: number
+                      default: 30
+            responses:
+                '200':
+                    description: Feed loaded successfully!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/postArray'
+                '400':
+                    description: When error ocured!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+                '404':
+                    description: When some entity is not found! Could be wrong postId or userId for example.
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+    /api/posts/me:
+        get:
+            description: 'Posts that are created by current user, based on access token'
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Bearer token required to access protected api routes.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+                      example: Bearer <access token>
+                - name: page
+                  in: query
+                  description: Page number that you want to see.
+                  required: false
+                  style: form
+                  explode: true
+                  schema:
+                      minimum: 1
+                      type: number
+                      default: 1
+                - name: perPage
+                  in: query
+                  description: Count of posts per page that you want to see.
+                  required: false
+                  style: form
+                  explode: true
+                  schema:
+                      minimum: 10
+                      type: number
+                      default: 30
+            responses:
+                '200':
+                    description: Feed loaded successfully!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/postArray'
+                '400':
+                    description: When error ocured!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+                '404':
+                    description: When some entity is not found! Could be wrong postId or userId for example.
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+    /api/posts/{id}/statistics:
+        patch:
+            description: Changing statistics of an existing post. Such as like and dislikes
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Bearer token required to access protected api routes.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+                      example: Bearer <access token>
+                - name: id
+                  in: path
+                  description: Post Id that you want to update.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/id_statistics_body'
+            responses:
+                '200':
+                    description: Post updated successfully!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_201_1'
+                '400':
+                    description: When error ocured!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+    /api/posts/{postId}:
+        delete:
+            description: Delete post by Id
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Bearer token required to access protected api routes.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+                      example: Bearer <access token>
+                - name: postId
+                  in: path
+                  description: Post Id that you want to delete.
+                  required: true
+                  style: simple
+                  explode: false
+                  schema:
+                      type: string
+            responses:
+                '400':
+                    description: When error ocured!
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+                '404':
+                    description: When some entity is not found! Could be wrong postId or userId for example.
+                    content:
+                        aplication/json:
+                            schema:
+                                $ref: '#/components/schemas/inline_response_400'
+                '204':
+                    description: When some entity is deleted successfully.
+                    content:
+                        aplication/json:
+                            schema:
+                                type: string
+                                example: OK
+components:
+    schemas:
+        post:
+            type: object
+            properties:
+                title:
+                    type: string
+                body:
+                    type: string
+                likes:
+                    type: number
+                dislikes:
+                    type: number
+                id:
+                    type: string
+                owner:
+                    $ref: '#/components/schemas/user'
+        postArray:
+            type: object
+            properties:
+                posts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/post'
+        user:
+            type: object
+            properties:
+                id:
+                    type: string
+                email:
+                    type: string
+                name:
+                    type: string
+        comment:
+            type: object
+            properties:
+                id:
+                    type: string
+                text:
+                    type: string
+                creator:
+                    $ref: '#/components/schemas/user'
+        api_auth_body:
+            type: object
+            properties:
+                name:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        inline_response_201:
+            type: object
+            properties:
+                token:
+                    type: string
+        inline_response_400:
+            type: object
+            properties:
+                error:
+                    type: string
+        auth_login_body:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+        inline_response_200:
+            type: object
+            properties:
+                logo:
+                    type: string
+                    description: url to webiste logo
+                name:
+                    type: string
+                    description: Webstite name
+                about:
+                    type: string
+                    description: Website description
+        inline_response_201_1:
+            type: object
+            properties:
+                post:
+                    $ref: '#/components/schemas/post'
+        id_statistics_body:
+            type: object
+            properties:
+                type:
+                    type: string
+                    enum:
+                        - like
+                        - dislike
+        postId_comment_body:
+            type: object
+            properties:
+                text:
+                    type: string
+        inline_response_201_2:
+            type: object
+            properties:
+                post:
+                    $ref: '#/components/schemas/comment'
+    responses:
+        error400:
+            description: When error ocured!
+            content:
+                aplication/json:
+                    schema:
+                        $ref: '#/components/schemas/inline_response_400'
+        error404:
+            description: When some entity is not found! Could be wrong postId or userId for example.
+            content:
+                aplication/json:
+                    schema:
+                        $ref: '#/components/schemas/inline_response_400'
+        delete204:
+            description: When some entity is deleted successfully.
+            content:
+                aplication/json:
+                    schema:
+                        type: string
+                        example: OK
+    parameters:
+        authHeader:
+            name: Authorization
+            in: header
+            description: Bearer token required to access protected api routes.
+            required: true
+            style: simple
+            explode: false
+            schema:
+                type: string
+                example: Bearer <access token>
